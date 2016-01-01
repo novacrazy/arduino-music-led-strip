@@ -5,15 +5,17 @@
 #ifndef CONTROLLER_COMMANDS_H
 #define CONTROLLER_COMMANDS_H
 
-#define REQUEST_ACTION_COMMAND          0x0
+#define COMMAND_REQUEST_ACTION                  0x0
 
-#define ECHO_COMMAND                    0x1
-#define WRITE_LCD_COMMAND               0x2
-#define CLEAR_LCD_COMMAND               0x3
-#define WRITE_STEREO_COMMAND            0x4
-#define ENTER_LOW_POWER_MODE_COMMAND    0x5
-#define CHANGE_COLOR_TEMPERATURE        0x6
-#define CHANGE_COLOR_CORRECTION         0x7
-#define CHANGE_LED_BRIGHTNESS           0x8
+#define COMMAND_ECHO                            0x1
+#define COMMAND_WRITE_LCD                       0x2
+#define COMMAND_CLEAR_LCD                       0x3
+#define COMMAND_WRITE_STEREO                    0x4
+#define COMMAND_ENTER_LOW_POWER_MODE            0x5
+#define COMMAND_CHANGE_COLOR_TEMPERATURE        0x6
+#define COMMAND_CHANGE_COLOR_CORRECTION         0x7
+#define COMMAND_CHANGE_LED_BRIGHTNESS           0x8
+
+#define COMMAND_INFO                            0x9
 
 #endif //CONTROLLER_COMMANDS_H
