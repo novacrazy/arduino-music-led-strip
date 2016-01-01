@@ -45,10 +45,8 @@ CommandProtocol::CommandProtocol(Stream *const stream, const CommandProtocolMagi
 }
 
 void CommandProtocol::start() {
-    uint8_t it = 0;
-
     if (!this->initialized) {
-        uint8_t stage = 0, len = strlen(magic->_start_message);
+        uint8_t it = 0, stage = 0, len = strlen(magic->_start_message);
 
         bool do_loop = true;
 
@@ -123,7 +121,7 @@ bool CommandProtocol::isWaiting() const {
     return this->next.waiting;
 }
 
-void CommandProtocol::yield() {
+void CommandProtocol::run() {
     if (next.waiting && this->stream->available()) {
         switch (next.stage) {
             case 0: {

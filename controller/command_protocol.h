@@ -105,7 +105,7 @@ public:
     bool isWaiting() const;
 
     //This should be called as often as possible
-    void yield();
+    void run();
 };
 
 #endif //CONTROLLER_COMMAND_PROTOCOL_H

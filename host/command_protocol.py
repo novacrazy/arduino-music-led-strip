@@ -126,5 +126,5 @@ class CommandProtocol:
             else:
                 return False
 
-    def yield_stream(self):
+    def run(self):
         pass
