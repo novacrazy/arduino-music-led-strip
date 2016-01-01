@@ -87,7 +87,7 @@ void CommandProtocol::start() {
     }
 }
 
-bool CommandProtocol::sendRequest(const Command &request, void (*callback)(Command *)) {
+bool CommandProtocol::sendCommand(const Command &request, void (*callback)(Command *)) {
     if (this->isWaiting()) {
         return false;
 

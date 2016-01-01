@@ -67,9 +67,9 @@ class CommandProtocol:
                     stage += 1
                 elif stage is 1:
                     while self.stream.in_waiting:
-                        next = self.stream.read()
+                        n = self.stream.read()
 
-                        if self.magic.start_message[it] == next:
+                        if self.magic.start_message[it] == n:
                             it += 1
 
                             if it == length:
@@ -88,7 +88,7 @@ class CommandProtocol:
     def is_waiting(self):
         return self.next.waiting
 
-    def send_request(self, request, callback):
+    def send_command(self, request, callback):
         """
         :param Command request:
         :param Function callback:

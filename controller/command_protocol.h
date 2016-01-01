@@ -59,7 +59,7 @@ public:
  *          disableLEDStrip();
  *
  *          //Usually a request for data is sent
- *          protocol.sendRequest(&request_command, &myCallback);
+ *          protocol.sendCommand(request_command, myCallback);
  *      }
  * }
  *
@@ -100,7 +100,7 @@ public:
 
     void start();
 
-    bool sendRequest(const Command &, void (*)(Command *));
+    bool sendCommand(const Command &, void (*)(Command *));
 
     bool isWaiting() const;
 
