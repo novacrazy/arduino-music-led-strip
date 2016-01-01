@@ -88,8 +88,15 @@ bool CommandProtocol::sendRequest(const Command *request, const void (*callback)
     } else {
         size_t sent = 0;
 
+        if (request->size > 0 && request->data != NULL) {
+            return false;
+        }
+
         sent += this->stream->write((uint8_t *) (request), 2);
-        sent += this->stream->write(request->data, request->size);
+
+        if (request->size > 0) {
+            sent += this->stream->write(request->data, request->size);
+        }
 
         if (sent == request->size + 2) {
             next.callback = callback;
@@ -121,6 +128,8 @@ void CommandProtocol::yield() {
                 break;
             }
             case 1: {
+                //This seems a bit contrived, but it's just so reads can be bundled together as one operation
+
                 if (this->stream->available() >= 2 && next.count == 0) {
                     this->stream->readBytes((uint8_t *) (&next.command), 2);
 
@@ -139,11 +148,13 @@ void CommandProtocol::yield() {
                     next.count = 0;
                 }
 
+                //If there is still stuff in the stream buffer to read and we are on stage 2, go ahead and fall into it
                 if (next.stage == 1 || !this->stream->available()) {
                     break;
                 }
             }
             case 2: {
+                //Read available chunks into the buffer
                 next.count += this->stream->readBytes(CommandProtocol::default_buffer + next.count,
                                                       min(next.command.size - next.count,
                                                           (uint8_t) this->stream->available()));
