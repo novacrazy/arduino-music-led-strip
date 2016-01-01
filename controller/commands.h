@@ -18,4 +18,6 @@
 
 #define COMMAND_INFO                            0x9
 
+#define COMMAND_NO_OP                           0xA
+
 #endif //CONTROLLER_COMMANDS_H
