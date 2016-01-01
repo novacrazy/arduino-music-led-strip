@@ -17,12 +17,13 @@ void commandCallback(Command *cmd) {
         case COMMAND_ECHO: {
             cmd->setCommand(COMMAND_INFO);
 
-            protocol->sendRequest(*cmd, commandCallback);
+            protocol->sendCommand(*cmd, commandCallback);
 
             break;
         }
+        case COMMAND_NO_OP:
         case COMMAND_INFO: {
-            //Discard info
+            //Discard
             break;
         }
         default: {
@@ -62,10 +63,10 @@ void setup() {
 static Command request_command(COMMAND_REQUEST_ACTION);
 
 void loop() {
-    protocol->yield();
+    protocol->run();
 
     if (!protocol->isWaiting()) {
-        bool res = protocol->sendRequest(request_command, commandCallback);
+        bool res = protocol->sendCommand(request_command, commandCallback);
 
         if (!res) {
             Serial.print("Error");
