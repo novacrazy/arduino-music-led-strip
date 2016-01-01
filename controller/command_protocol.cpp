@@ -26,8 +26,16 @@ uint8_t Command::getCommand() const {
     return this->cmd;
 }
 
+void Command::setCommand(uint8_t cmd) {
+    this->cmd = cmd;
+}
+
 uint8_t Command::getSize() const {
     return this->size;
+}
+
+void Command::setSize(uint8_t size) {
+    this->size = size;
 }
 
 uint8_t CommandProtocol::default_buffer[COMMAND_PROTOCOL_DEFAULT_BUFFER_SIZE] = {0x0};
@@ -81,26 +89,26 @@ void CommandProtocol::start() {
     }
 }
 
-bool CommandProtocol::sendRequest(const Command *request, void (*callback)(Command *)) {
+bool CommandProtocol::sendRequest(const Command &request, void (*callback)(Command *)) {
     if (this->isWaiting()) {
         return false;
 
     } else {
         size_t sent = 0;
 
-        if (request->size > 0 && request->data != NULL) {
+        if (request.size > 0 && request.data != NULL) {
             return false;
         }
 
         sent += this->stream->write(this->magic->_magic_header);
 
-        sent += this->stream->write((uint8_t *) (request), 2);
+        sent += this->stream->write((uint8_t *) (&request), 2);
 
-        if (request->size > 0) {
-            sent += this->stream->write(request->data, request->size);
+        if (request.size > 0) {
+            sent += this->stream->write(request.data, request.size);
         }
 
-        if (sent == request->size + 3) {
+        if (sent == request.size + 3) {
             next.callback = callback;
             this->next.waiting = true;
             return true;

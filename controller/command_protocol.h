@@ -32,7 +32,11 @@ public:
 
     uint8_t getCommand() const;
 
+    void setCommand(uint8_t);
+
     uint8_t getSize() const;
+
+    void setSize(uint8_t);
 
     friend class CommandProtocol;
 };
@@ -96,7 +100,7 @@ public:
 
     void start();
 
-    bool sendRequest(const Command *, void (*)(Command *));
+    bool sendRequest(const Command &, void (*)(Command *));
 
     bool isWaiting() const;
 
