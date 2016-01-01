@@ -5,8 +5,8 @@ project(${PROJECT_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+include_directories("C:/Program Files (x86)/Arduino/libraries/ArduinoThread")
 include_directories("C:/Program Files (x86)/Arduino/libraries/FastLED")
-include_directories("C:/Program Files (x86)/Arduino/libraries/LiquidCrystal")
 
 set(${CMAKE_PROJECT_NAME}_SKETCH controller.ino)
 set(${CMAKE_PROJECT_NAME}_BOARD mega)
