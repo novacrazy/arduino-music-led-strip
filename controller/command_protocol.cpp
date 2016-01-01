@@ -116,26 +116,50 @@ void CommandProtocol::yield() {
                     next.stage++;
                 }
 
+                next.count = 0;
+
                 break;
             }
             case 1: {
-                this->stream->readBytes((uint8_t *) (&next.command), 2);
+                if (this->stream->available() >= 2 && next.count == 0) {
+                    this->stream->readBytes((uint8_t *) (&next.command), 2);
 
-                next.stage++;
+                } else if (next.count < 2) {
+                    if (next.count == 0) {
+                        next.command.cmd = (uint8_t) (this->stream->read());
+                        next.count++;
+
+                    } else if (next.count == 1) {
+                        next.command.size = (uint8_t) (this->stream->read());
+                        next.count++;
+                    }
+
+                } else {
+                    next.stage++;
+                    next.count = 0;
+                }
+
+                if (next.stage == 1 || !this->stream->available()) {
+                    break;
+                }
+            }
+            case 2: {
+                next.count += this->stream->readBytes(CommandProtocol::default_buffer + next.count,
+                                                      min(next.command.size - next.count,
+                                                          (uint8_t) this->stream->available()));
+
+                if (next.count == next.command.size) {
+                    next.stage++;
+                }
 
                 break;
             }
-            case 2: {
-                uint8_t size = next.command.size;
-
-                //read into the default buffer
-                this->stream->readBytes(CommandProtocol::default_buffer, size);
-
+            case 4: {
                 //only memset what has not been read into
-                auto diff = COMMAND_PROTOCOL_DEFAULT_BUFFER_SIZE - size;
+                auto diff = COMMAND_PROTOCOL_DEFAULT_BUFFER_SIZE - next.command.size;
 
                 //do memset
-                memset(CommandProtocol::default_buffer + size, 0, diff);
+                memset(CommandProtocol::default_buffer + next.command.size, 0, diff);
 
                 //assign default buffer to next command data
                 //if the action want to keep the data persistent,

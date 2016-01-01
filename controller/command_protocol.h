@@ -81,12 +81,12 @@ private:
     const CommandProtocolMagic *magic;
 
     struct _Next {
-        uint8_t stage;
+        uint8_t stage, count;
         Command command;
         bool waiting;
 
         const void (*callback)(Command *);
-    } next{0, {0, 0}, false, NULL};
+    } next{0, 0, {0, 0}, false, NULL};
 
     bool initialized;
 
