@@ -14,8 +14,15 @@ CommandProtocol *protocol;
 
 void commandCallback(Command *cmd) {
     switch (cmd->getCommand()) {
-        case ECHO_COMMAND: {
-            Serial.write(cmd->getData(), cmd->getSize());
+        case COMMAND_ECHO: {
+            cmd->setCommand(COMMAND_INFO);
+
+            protocol->sendRequest(*cmd, commandCallback);
+
+            break;
+        }
+        case COMMAND_INFO: {
+            //Discard info
             break;
         }
         default: {
@@ -52,13 +59,13 @@ void setup() {
     Serial.print(F("Initialized"));
 }
 
-static Command request_command(REQUEST_ACTION_COMMAND);
+static Command request_command(COMMAND_REQUEST_ACTION);
 
 void loop() {
     protocol->yield();
 
     if (!protocol->isWaiting()) {
-        bool res = protocol->sendRequest(&request_command, &commandCallback);
+        bool res = protocol->sendRequest(request_command, commandCallback);
 
         if (!res) {
             Serial.print("Error");
