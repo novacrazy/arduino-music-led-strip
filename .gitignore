@@ -30,3 +30,8 @@ node_modules
 # TypeScript compiler notes
 .tscache
 .baseDir.*
+
+*_old
+*_old.*
+
+cmake
