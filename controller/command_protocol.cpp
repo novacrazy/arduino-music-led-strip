@@ -81,7 +81,7 @@ void CommandProtocol::start() {
     }
 }
 
-bool CommandProtocol::sendRequest(const Command *request, const void (*callback)(Command *)) {
+bool CommandProtocol::sendRequest(const Command *request, void (*callback)(Command *)) {
     if (this->isWaiting()) {
         return false;
 
@@ -92,13 +92,15 @@ bool CommandProtocol::sendRequest(const Command *request, const void (*callback)
             return false;
         }
 
+        sent += this->stream->write(this->magic->_magic_header);
+
         sent += this->stream->write((uint8_t *) (request), 2);
 
         if (request->size > 0) {
             sent += this->stream->write(request->data, request->size);
         }
 
-        if (sent == request->size + 2) {
+        if (sent == request->size + 3) {
             next.callback = callback;
             this->next.waiting = true;
             return true;

@@ -85,7 +85,7 @@ private:
         Command command;
         bool waiting;
 
-        const void (*callback)(Command *);
+        void (*callback)(Command *);
     } next{0, 0, {0, 0}, false, NULL};
 
     bool initialized;
@@ -96,7 +96,7 @@ public:
 
     void start();
 
-    bool sendRequest(const Command *, const void (*)(Command *));
+    bool sendRequest(const Command *, void (*)(Command *));
 
     bool isWaiting() const;
 
