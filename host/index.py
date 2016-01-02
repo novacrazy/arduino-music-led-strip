@@ -1,5 +1,3 @@
-"""PyAudio example: Record a few seconds of audio and save to a WAVE file."""
-
 from listen_thread import ListenerThread
 import commands
 from command_protocol import CommandProtocol, Command
