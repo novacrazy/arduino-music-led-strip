@@ -49,15 +49,18 @@ def format_stereo(data):
     return struct.pack("<fff", *data)
 
 
-def write_stereo(left, right):
+def write_stereo(channels):
     global protocol, peaks
-    stereo_cmd = Command(cmd=commands.COMMAND_WRITE_STEREO, data=(left, right, np.max(peaks)), fmt=format_stereo)
+    peaks.append(np.max(channels))
+    stereo_cmd = Command(cmd=commands.COMMAND_WRITE_STEREO,
+                         data=(channels[0], channels[1], np.max(peaks)),
+                         fmt=format_stereo)
 
     res = protocol.send_command(stereo_cmd)
 
 
 def callback(cmd):
-    global zeroed, peaks, last_time, protocol
+    global peaks, last_time, protocol
 
     if cmd.cmd is commands.COMMAND_REQUEST_ACTION:
         channels = np.fromstring(''.join(m.data), dtype=np.int16).reshape((2, -1), order='F')
@@ -70,7 +73,9 @@ def callback(cmd):
             if avg_level >= 1.0:
                 mean = np.absolute(channels).mean(axis=1)
 
-                peaks.append(mean.max())
+                write_stereo(mean)
+
+                last_time = time.time()
 
                 # print(len(mono))
 
@@ -95,19 +100,12 @@ def callback(cmd):
                 # plt.plot(freqs, w.real)
 
                 # value = np.sum((min, max), axis=0).astype(np.uint8)
-
-                write_stereo(mean[0], mean[1])
-
-                zeroed = False
-                last_time = time.time()
-
-            elif time.time() - last_time > 15.0:
-                time.sleep(0.5)
-                write_stereo(0, 0)
             else:
-                write_stereo(0, 0)
+                if time.time() - last_time > 15.0:
+                    time.sleep(0.5)
+                write_stereo((0, 0))
         else:
-            write_stereo(0, 0)
+            write_stereo((0, 0))
 
 
 protocol.start(callback)
