@@ -20,6 +20,6 @@
 
 //LEDs for stereo channel display
 #define LEFT_LED_PIN 5
-#define RIGHT_LED_PIN 6
+#define RIGHT_LED_PIN 4
 
 #endif //CONTROLLER_PIN_CONFIG_H
