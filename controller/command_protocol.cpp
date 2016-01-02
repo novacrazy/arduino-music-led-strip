@@ -133,7 +133,7 @@ bool CommandProtocol::isWaiting() const {
 }
 
 void CommandProtocol::run() {
-    if (next.waiting && this->stream->available()) {
+    if (next.waiting && (this->stream->available() || next.stage > 2)) {
         switch (next.stage) {
             case 0: {
                 auto c = this->stream->read();
@@ -151,6 +151,7 @@ void CommandProtocol::run() {
 
                 if (this->stream->available() >= 2 && next.count == 0) {
                     this->stream->readBytes((uint8_t *) (&next.command), 2);
+                    next.count = 2;
 
                 } else if (next.count < 2) {
                     if (next.count == 0) {
@@ -173,10 +174,12 @@ void CommandProtocol::run() {
                 }
             }
             case 2: {
-                //Read available chunks into the buffer
-                next.count += this->stream->readBytes(CommandProtocol::default_buffer + next.count,
-                                                      min(next.command.size - next.count,
-                                                          (uint8_t) this->stream->available()));
+                if (next.command.size > 0) {
+                    //Read available chunks into the buffer
+                    next.count += this->stream->readBytes(CommandProtocol::default_buffer + next.count,
+                                                          min(next.command.size - next.count,
+                                                              (uint8_t) this->stream->available()));
+                }
 
                 if (next.count == next.command.size) {
                     next.stage++;
@@ -184,7 +187,7 @@ void CommandProtocol::run() {
 
                 break;
             }
-            case 4: {
+            case 3: {
                 //only memset what has not been read into
                 auto diff = COMMAND_PROTOCOL_DEFAULT_BUFFER_SIZE - next.command.size;
 
@@ -200,7 +203,7 @@ void CommandProtocol::run() {
 
                 break;
             }
-            case 3: {
+            case 4: {
                 next.waiting = false;
 
                 (*this->callback)(&next.command);
