@@ -76,6 +76,9 @@ struct CommandProtocolMagic {
 extern CommandProtocolMagic default_command_protocol_magic;
 
 class CommandProtocol {
+public:
+    typedef void (*callback_t)(Command *);
+
 protected:
     static uint8_t default_buffer[COMMAND_PROTOCOL_DEFAULT_BUFFER_SIZE];
 
@@ -88,9 +91,9 @@ private:
         uint8_t stage, count;
         Command command;
         bool waiting;
+    } next{0, 0, {0, 0}, false};
 
-        void (*callback)(Command *);
-    } next{0, 0, {0, 0}, false, NULL};
+    callback_t callback;
 
     bool initialized;
 
@@ -98,9 +101,17 @@ public:
     CommandProtocol(Stream *const = &Serial,
                     const CommandProtocolMagic * = &default_command_protocol_magic);
 
-    void start();
+    void start(callback_t = NULL);
 
-    bool sendCommand(const Command &, void (*)(Command *));
+    bool sendCommand(const Command &);
+
+    bool sendCommand(const Command &, callback_t);
+
+    void awaitCommand(callback_t = NULL);
+
+    void setCallback(callback_t);
+
+    callback_t getCallback() const;
 
     bool isWaiting() const;
 

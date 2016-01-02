@@ -44,7 +44,11 @@ CommandProtocol::CommandProtocol(Stream *const stream, const CommandProtocolMagi
     : stream(stream), initialized(false), magic(magic) {
 }
 
-void CommandProtocol::start() {
+void CommandProtocol::start(callback_t callback) {
+    if (callback != NULL) {
+        this->setCallback(callback);
+    }
+
     if (!this->initialized) {
         uint8_t it = 0, stage = 0, len = strlen(magic->_start_message);
 
@@ -87,7 +91,7 @@ void CommandProtocol::start() {
     }
 }
 
-bool CommandProtocol::sendCommand(const Command &request, void (*callback)(Command *)) {
+bool CommandProtocol::sendCommand(const Command &request) {
     if (this->isWaiting()) {
         return false;
 
@@ -107,7 +111,6 @@ bool CommandProtocol::sendCommand(const Command &request, void (*callback)(Comma
         }
 
         if (sent == request.size + 3) {
-            next.callback = callback;
             this->next.waiting = true;
             return true;
 
@@ -115,6 +118,14 @@ bool CommandProtocol::sendCommand(const Command &request, void (*callback)(Comma
             return false;
         }
     }
+}
+
+void CommandProtocol::awaitCommand(CommandProtocol::callback_t callback) {
+    if (callback != NULL) {
+        this->setCallback(callback);
+    }
+
+    this->next.waiting = true;
 }
 
 bool CommandProtocol::isWaiting() const {
@@ -192,10 +203,23 @@ void CommandProtocol::run() {
             case 3: {
                 next.waiting = false;
 
-                (*next.callback)(&next.command);
+                (*this->callback)(&next.command);
 
                 next.stage = 0;
             }
         }
     }
+}
+
+bool CommandProtocol::sendCommand(const Command &request, callback_t callback) {
+    this->setCallback(callback);
+    return this->sendCommand(request);
+}
+
+void CommandProtocol::setCallback(CommandProtocol::callback_t callback) {
+    this->callback = callback;
+}
+
+CommandProtocol::callback_t CommandProtocol::getCallback() const {
+    return this->callback;
 }
