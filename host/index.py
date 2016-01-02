@@ -36,7 +36,7 @@ last_time = time.time()
 
 refresh_rate = 1.0 / 60.0
 
-peaks = deque(maxlen=(100 * 30))  # at 100 requests per second, this would be 30 seconds
+peaks = deque(maxlen=(100 * 10))  # at 100 requests per second, this would be 10 seconds
 
 ser = serial.Serial('COM5', 256000, parity=serial.PARITY_EVEN, stopbits=serial.STOPBITS_TWO)
 
@@ -118,4 +118,4 @@ protocol.await_command()
 
 while True:
     protocol.run()
-    time.sleep(1.0 / 100)
+    time.sleep(1.0 / 100.0)
