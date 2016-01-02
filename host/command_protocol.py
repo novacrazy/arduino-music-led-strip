@@ -5,7 +5,7 @@ import struct
 import commands
 
 START_MESSAGE = "Hello, World!"
-MAGIC_HEADER = '\xff'
+MAGIC_HEADER = struct.pack("<B", 0xFF)
 
 COMMAND_PROTOCOL_DEFAULT_BUFFER_SIZE = 256
 COMMAND_PROTOCOL_DEFAULT_WAIT_TIME = 0.1
@@ -160,14 +160,12 @@ class CommandProtocol:
                 n.count = 0
 
             if n.stage is 1:
-                print("Reading header")
                 n.command.cmd, n.command.size = struct.unpack("<BB", s.read(2))
 
                 n.stage += 1
 
             # if there is still data to be read, go ahead and try to read it
             if n.stage is 2 and s.in_waiting:
-                print("Reading data")
                 n.command.data = s.read(n.command.size)
 
                 n.stage += 1
@@ -180,7 +178,6 @@ class CommandProtocol:
                 n.stage += 1
 
             if n.stage is 4:
-                print("Calling callback")
                 n.waiting = False
                 if n.callback is not None:
                     n.callback(n.command)
