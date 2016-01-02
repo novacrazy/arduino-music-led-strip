@@ -9,7 +9,7 @@
 
 #include <FastLED.h>
 
-#include "pin_config.h"
+#include "pin_config.hpp"
 
 #define MY_STRIP_COLOR_CORRECTION 0xFFB0A0
 

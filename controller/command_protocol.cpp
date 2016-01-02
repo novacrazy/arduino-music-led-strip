@@ -2,7 +2,7 @@
 // Created by Aaron on 1/1/2016.
 //
 
-#include "command_protocol.h"
+#include "command_protocol.hpp"
 
 CommandProtocolMagic default_command_protocol_magic("Hello, World!", 0xFF);
 

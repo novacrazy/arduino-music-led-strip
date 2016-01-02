@@ -1,13 +1,13 @@
 #include <Arduino.h>
 #include <LiquidCrystal.h>
 
-#include "pin_config.h"
+#include "pin_config.hpp"
 
-#include "command_protocol.h"
+#include "command_protocol.hpp"
 
-#include "commands.h"
+#include "commands.hpp"
 
-#include "led_strip.h"
+#include "led_strip.hpp"
 
 LiquidCrystal *lcd;
 CommandProtocol *protocol;

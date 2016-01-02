@@ -2,7 +2,7 @@
 // Created by Aaron on 12/31/2015.
 //
 
-#include "led_strip.h"
+#include "led_strip.hpp"
 
 CRGB LED_STRIP[NUM_LEDS];
 
