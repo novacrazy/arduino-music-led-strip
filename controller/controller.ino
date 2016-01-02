@@ -79,7 +79,7 @@ void showLEDs() {
     float whole, max_recorded = channels[2];
 
     float left_max = mapf(channels[0], 0, max_recorded, 0, channel_count);
-    float right_max = NUM_LEDS - mapf(channels[1], 0, max_recorded, 0, channel_count);
+    float right_max = NUM_LEDS - mapf(channels[1], 0, max_recorded, 0, channel_count) - 1;
 
     fill_rainbow(LED_STRIP, NUM_LEDS, 0, 255 / NUM_LEDS);
 
@@ -95,7 +95,7 @@ void showLEDs() {
         }
     }
 
-    blur1d(LED_STRIP, NUM_LEDS, 128);
+    blur1d(LED_STRIP, NUM_LEDS, 160);
 
     analogWrite(LEFT_LED_PIN, mapf(channels[0], 0, max_recorded, 0, 255));
     analogWrite(RIGHT_LED_PIN, mapf(channels[1], 0, max_recorded, 0, 255));
