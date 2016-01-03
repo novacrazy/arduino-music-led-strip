@@ -9,15 +9,13 @@
 
 #include "led_strip.hpp"
 
+#include "math.hpp"
+
 LiquidCrystal *lcd;
 CommandProtocol *protocol;
 float channels[3];
 
 static Command request_command(COMMAND_REQUEST_ACTION);
-
-float mapf(float x, float in_min, float in_max, float out_min, float out_max) {
-    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
 
 void commandCallback(Command *cmd) {
     switch (cmd->getCommand()) {
@@ -39,8 +37,6 @@ void commandCallback(Command *cmd) {
             break;
         }
         default: {
-            digitalWrite(13, HIGH);
-
             Serial.print(F("Unknown Command"));
         }
     }
@@ -78,8 +74,8 @@ void showLEDs() {
 
     float whole, max_recorded = channels[2];
 
-    float left_max = mapf(channels[0], 0, max_recorded, 0, channel_count);
-    float right_max = NUM_LEDS - mapf(channels[1], 0, max_recorded, 0, channel_count) - 1;
+    float left_max = fscale(channels[0], 0, max_recorded, 0, channel_count, 2);
+    float right_max = NUM_LEDS - fscale(channels[1], 0, max_recorded, 0, channel_count, 2) - 1;
 
     fill_rainbow(LED_STRIP, NUM_LEDS, 0, 255 / NUM_LEDS);
 
@@ -97,8 +93,8 @@ void showLEDs() {
 
     blur1d(LED_STRIP, NUM_LEDS, 160);
 
-    analogWrite(LEFT_LED_PIN, mapf(channels[0], 0, max_recorded, 0, 255));
-    analogWrite(RIGHT_LED_PIN, mapf(channels[1], 0, max_recorded, 0, 255));
+    analogWrite(LEFT_LED_PIN, fmap(channels[0], 0, max_recorded, 0, 255));
+    analogWrite(RIGHT_LED_PIN, fmap(channels[1], 0, max_recorded, 0, 255));
 
     FastLED.delay(10);
 }
