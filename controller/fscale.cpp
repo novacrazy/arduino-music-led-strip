@@ -11,11 +11,7 @@ float fscale(float inputValue, float originalMin, float originalMax, float newBe
         return 0;
     }
 
-    float originalRange,
-        zeroRefCurVal,
-        normalizedCurVal,
-        rangedValue,
-        newRange = 0;
+    float normalizedCurVal, newRange;
 
     bool invFlag = false;
 
@@ -27,9 +23,6 @@ float fscale(float inputValue, float originalMin, float originalMax, float newBe
         inputValue = originalMax;
     }
 
-    // Zero Reference the values
-    originalRange = originalMax - originalMin;
-
     if (newEnd > newBegin) {
         newRange = newEnd - newBegin;
 
@@ -37,12 +30,6 @@ float fscale(float inputValue, float originalMin, float originalMax, float newBe
         newRange = newBegin - newEnd;
         invFlag = true;
     }
-
-    zeroRefCurVal = inputValue - originalMin;
-    normalizedCurVal = zeroRefCurVal / originalRange;   // normalize to 0 - 1 float
-
-    // condition curve parameter
-    // limit range
 
     if (curve > 10) {
         curve = 10;
@@ -54,13 +41,13 @@ float fscale(float inputValue, float originalMin, float originalMax, float newBe
     // convert linear scale into logarithmic exponent for other pow function
     curve = pow(10, curve * -0.1);
 
-    if (invFlag == 0) {
-        rangedValue = (pow(normalizedCurVal, curve) * newRange) + newBegin;
+    normalizedCurVal = (inputValue - originalMin) / (originalMax - originalMin);
+
+    if (invFlag) {
+        // invert the ranges
+        return newBegin - (pow(normalizedCurVal, curve) * newRange);
 
     } else {
-        // invert the ranges
-        rangedValue = newBegin - (pow(normalizedCurVal, curve) * newRange);
+        return (pow(normalizedCurVal, curve) * newRange) + newBegin;
     }
-
-    return rangedValue;
 }
